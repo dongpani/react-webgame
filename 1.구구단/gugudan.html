@@ -29,7 +29,28 @@
                 return (
                     <div>
                         <div> {this.state.first} 곱하기 {this.state.second} 는?</div>
-                        <form>
+                        <form onSubmit = {(e) => {
+                            e.preventDefault();
+
+                            let value = Number(this.state.value);
+                            let first = this.state.first;
+                            let second  = this.state.second;
+                            let multiply = 0;
+                            multiply = first * second;
+
+                            // console.log('multiply=', multiply);
+                            /*
+                            console.log('value=',  typeof this.state.value);   // string
+                            console.log('first=',  typeof this.state.first);   // number
+                            console.log('second=', typeof this.state.second);  // number
+                            */
+                                                        
+                            if(value === multiply )
+                                this.setState({result : '정답입니다.' });
+                            else
+                                this.setState({result : '틀렸습니다.' });
+
+                        }}>
                             <input type="number" value={this.state.value} onChange={(e) => this.setState({ value: e.target.value }) } />
                             <button> 입력! </button>
                         </form>
