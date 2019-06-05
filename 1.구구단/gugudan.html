@@ -15,6 +15,7 @@
     <script type="text/babel">
         class GuGuDan extends React.Component {
 
+            /*
             constructor(props) {
                 super(props);
                 this.state = { // 상태 - 바뀌는 것
@@ -24,38 +25,71 @@
                     result: '',
                 };
             }
+            */
+
+            // 생성자 함수를 없애도 된다.
+            // 실무에서는 이게 더 많이 쓰인다.
+            state = { // 상태 - 바뀌는 것
+                first: Math.ceil(Math.random() * 9),
+                second: Math.ceil(Math.random() * 9),
+                value: '',
+                result: '',
+            };
+
+            onSubmit = (e) => {
+                e.preventDefault(); // 이벤트 기본속성 초기화.
+
+                let value = Number(this.state.value);
+                let first = this.state.first;
+                let second  = this.state.second;
+                let multiply = 0;
+                multiply = first * second;
+
+                // console.log('multiply=', multiply);
+                /*
+                console.log('value=',  typeof this.state.value);   // string
+                console.log('first=',  typeof this.state.first);   // number
+                console.log('second=', typeof this.state.second);  // number
+                */
+                                            
+                if(value === multiply )  { // 입력한 value 와 first * second 가 같으면 ? 
+                    this.setState((preveState) => {
+                       return { 
+                            result : '정답입니다.' + preveState.value,
+                            first : Math.ceil(Math.random() * 9) ,
+                            second : Math.ceil(Math.random() * 9)
+                       };
+                    });
+
+                    this.state.value = '';
+                    this.input.focus();
+                }
+                else {
+                    this.setState({result : `틀렸습니다.` });
+                    // this.state.result = '틀렸습니다!!'
+                    this.input.focus();
+                }
+                    
+            };
+
+            onChange = (e) => {
+                this.setState({ value: e.target.value });
+            };
+
+            input;
+
+            OnRefInput = (c) => { this.input = c; };
 
             render() {
                 return (
-                    <div>
+                    <React.Fragment>
                         <div> {this.state.first} 곱하기 {this.state.second} 는?</div>
-                        <form onSubmit = {(e) => {
-                            e.preventDefault();
-
-                            let value = Number(this.state.value);
-                            let first = this.state.first;
-                            let second  = this.state.second;
-                            let multiply = 0;
-                            multiply = first * second;
-
-                            // console.log('multiply=', multiply);
-                            /*
-                            console.log('value=',  typeof this.state.value);   // string
-                            console.log('first=',  typeof this.state.first);   // number
-                            console.log('second=', typeof this.state.second);  // number
-                            */
-                                                        
-                            if(value === multiply )
-                                this.setState({result : '정답입니다.' });
-                            else
-                                this.setState({result : '틀렸습니다.' });
-
-                        }}>
-                            <input type="number" value={this.state.value} onChange={(e) => this.setState({ value: e.target.value }) } />
+                        <form onSubmit = {this.onSubmit}>
+                            <input ref = {this.OnRefInput} type="number" value={this.state.value} onChange={this.onChange} />
                             <button> 입력! </button>
                         </form>
                         <div>{this.state.result}</div>
-                    </div>
+                    </React.Fragment>
                 );
             }
         }
