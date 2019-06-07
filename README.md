@@ -77,5 +77,53 @@ npm init
 npm i react react-dom
 ```
 
+## 웹팩 설치하기
+
+```
+npm -i -D webpack webpack-cli
+```
+
+- 여기서 -D 는 개발할 때만 쓰겠다는 것.
+
+### 웹팩 & 리액트 설정 파일 생성
+
+- webpack-config.js
+
+<img src = "img/webpack-config.png" />
+
+```
+module.exports = {
+    
+};
+```
+
+- client.jsx
+
+<img src = "img/client-jsx.png" />
+
+```
+const React = require('react');
+const ReactDom = require('react-dom');
+```
+
+- index.html
+
+```
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>끝말잇기</title>
+</head>
+<body>
+    <div id="root"></div>
+    <script src="./dist/app.js"></script>
+</body>
+</html>
+```
+
+
+
+
 
 
