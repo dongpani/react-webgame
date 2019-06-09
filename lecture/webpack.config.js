@@ -8,10 +8,6 @@ module.exports = {
         extensions: ['.js', '.jsx']
     },
 
-    entry: { // 입력
-        app: ['./client'],
-    },
-
     module: {
         rules: [{
             test: /\.jsx?/,
@@ -22,6 +18,10 @@ module.exports = {
             },
         }],
     },
+
+    entry: { // 입력
+        app: ['./client'],
+    },    
 
     output: {  // 출력
         path: path.join(__dirname, 'dist'),
