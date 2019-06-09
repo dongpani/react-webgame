@@ -179,15 +179,84 @@ module.exports = {
   },
 ```
 
+## 브라우저 호환 설정 : webpack.config.js
 
+```
+    module: {
+        rules: [{
+            test: /\.jsx?/,
+            loader: 'babel-loader', 
+            options: {
+                presets: [
+                    ['@babel/preset-env', {
+                      targets: {
+                          browsers: ['> 1% in KR'], // browswerslist
+                      },
+                      debug: true,
+                    }],
+                    '@babel/preset-react',
+                ],
+                plugins: ['@babel/plugin-proposal-class-properties'],
+            },
+        }],
+    },
+```
 
+## npm 자동빌드 설정
 
+- npm 에서 다운받기.
 
+```
+npm i -D react-hot-loader
+```
 
+```
+npm i -D webpack-dev-server
+```
 
+- package.json 설정
 
+```
+  "scripts": {
+    "dev": "webpack-dev-server --hot"
+  },
+```  
 
+- client.jsx 소스 수정
 
+```
+const React = require('react');
+const ReactDom = require('react-dom');
+const { hot } = require('react-hot-leader/root');
 
+// const WordRelay = require('./WordRelay');
+const Hot = hot(WordRelay);
 
+ReactDom.render(<Hot />, document.querySelector('#root'));
+```
+
+- webpack.config.js 수정
+
+모둘 > babel-loader 의 플러그인에 추가
+
+```
+ plugins: ['@babel/plugin-proposal-class-properties', 'react-hot-loeader/babel']
+```
+
+- app.js 경로 변경
+
+```
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>끝말잇기</title>
+</head>
+<body>
+    <div id="root"></div>
+    <!-- <script src="./dist/app.js"></script> -->
+    <script src="./app.js"></script>
+</body>
+</html>
+```
 

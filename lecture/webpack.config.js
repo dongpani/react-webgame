@@ -8,23 +8,33 @@ module.exports = {
         extensions: ['.js', '.jsx']
     },
 
+    entry: { // 입력
+        app: ['./client'],
+    },        
+
     module: {
         rules: [{
             test: /\.jsx?/,
             loader: 'babel-loader', 
             options: {
-                presets: ['@babel/preset-env', '@babel/preset-react'],
-                plugins: ['@babel/plugin-proposal-class-properties'],
+                presets: [
+                    ['@babel/preset-env', {
+                      targets: {
+                          browsers: ['> 1% in KR'], // browswerslist
+                      },
+                      debug: true,
+                    }],
+                    '@babel/preset-react',
+                ],
+                plugins: ['@babel/plugin-proposal-class-properties', 'react-hot-loader/babel'],
             },
         }],
     },
 
-    entry: { // 입력
-        app: ['./client'],
-    },    
+    plugins: [],
 
     output: {  // 출력
-        path: path.join(__dirname, 'dist'),
+        path: path.join(__dirname),
         filename: 'app.js'
     },
 
