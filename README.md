@@ -227,7 +227,7 @@ npm i -D webpack-dev-server
 ```
 const React = require('react');
 const ReactDom = require('react-dom');
-const { hot } = require('react-hot-leader/root');
+const { hot } = require('react-hot-loader/root');
 
 // const WordRelay = require('./WordRelay');
 const Hot = hot(WordRelay);
@@ -254,7 +254,7 @@ ReactDom.render(<Hot />, document.querySelector('#root'));
 </head>
 <body>
     <div id="root"></div>
-    <!-- <script src="./dist/app.js"></script> -->
+    <script src="./dist/app.js"></script>
     <script src="./app.js"></script>
 </body>
 </html>

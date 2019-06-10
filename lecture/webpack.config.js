@@ -34,8 +34,8 @@ module.exports = {
     plugins: [],
 
     output: {  // 출력
-        path: path.join(__dirname),
-        filename: 'app.js'
+        path: path.join(__dirname, 'dist'),
+        filename: 'app.js',
+        publicPath: '/dist/', // 상대경로지정
     },
-
 };
