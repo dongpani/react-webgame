@@ -80,7 +80,7 @@ npm i react react-dom
 ## 웹팩 설치하기
 
 ```
-npm -i -D webpack webpack-cli
+npm i -D webpack webpack-cli
 ```
 
 - 여기서 -D 는 개발할 때만 쓰겠다는 것.
