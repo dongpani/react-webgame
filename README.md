@@ -260,3 +260,49 @@ ReactDom.render(<Hot />, document.querySelector('#root'));
 </html>
 ```
 
+<hr>
+
+## 리액트에서의 반복문
+
+- map
+
+```
+    <ul>
+        {[
+            // 2차원 배열 (반복문)
+            ['사과', '마시따'], ['바나나', '똥나옴'], ['포도', '달어'], ['귤', '귀차늠'], ['감', '안머금'], ['배', '흐어'], ['밤', '몰라!']
+        ].map((v) => {
+        return (
+            <li <b>{v.fruit}</b> - {v.taste}</li>
+        );
+        })}
+    </ul>
+```             
+
+- key
+
+```
+    <ul>
+        {[
+
+        // 객체 (반복문)
+        { fruit: '사과', taste: '마시따'},
+        { fruit: '포도', taste: '마시따'},
+        { fruit: '딸기', taste: '마시따'},
+        { fruit: '귤', taste: '마시따'},
+        { fruit: '바나나', taste: '마시따'},
+        { fruit: '참외', taste: '마시따'},
+        { fruit: '배', taste: '마시따'},
+        { fruit: '배', taste: '맛없다.'},
+
+        ].map((v) => {
+        return (
+            <li key={v.fruit + v.taste}> <b>{v.fruit}</b> - {v.taste}</li>
+        );
+        })}
+    </ul>
+```       
+- 중요한것은 반복믄을 key 로 사용할 때 반드시 태그안에 key 값을 지정해줘야 한다. (고유값 : PK 성질을 가짐.)
+이것은 브라우저 성능 최적화를 위해서 이지만 작업을 하다보면 여간 귀찮은게 아니다.
+주의할 점은 map 함수의 인덱스로 key 값을 지정하면 안된다.
+
