@@ -306,3 +306,34 @@ ReactDom.render(<Hot />, document.querySelector('#root'));
 이것은 브라우저 성능 최적화를 위해서 이지만 작업을 하다보면 여간 귀찮은게 아니다.
 주의할 점은 map 함수의 인덱스로 key 값을 지정하면 안된다.
 
+
+### shouldComponentUpdate
+
+리액트는 데이터가 다시 리바인딩 될 때 렌더링이 된다고 했지만, 실제로는 그렇지 않다.
+이게 문제가 되는 것이 화면의 데이터가 바뀌는 것이 없는데도 이벤트가 일어날 때마다 계속 렌더링이 되기 때문에
+엄청난 성능하락을 가져온다. 
+
+그렇기에 수동으로 데이터가 변동되지 않았을 때는 렌더링이 되지 않도록 막아야한다.
+
+- shouldComponentUpdate 메서드
+
+```
+state = {
+    counter: 0,
+}
+
+shouldComponentUpdate(nextProps, nextState, nextContext) {
+    if(this.state.counter !== nextState.counter) {
+        return true;
+    }
+
+    return false;
+}
+```
+
+현재 데이터와 미래에 변동 될 데이터가 다를 때만 렌더링한다.
+
+- pureComponent : 위에거 보다 간단함. 하지만 렌더링 분기처리는 불가능.
+
+
+
