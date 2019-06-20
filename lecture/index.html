@@ -2,7 +2,29 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>숫자야구</title>
+    <title>반응속도체크</title>
+
+    <style>
+        #screen {
+            width: 500px;
+            height: 400px;
+            text-align: center;
+            user-select: none;
+            font-size: 25px;
+        }
+        #screen.waiting {
+            background-color:aqua;
+        }
+        #screen.ready {
+            background-color: red;
+            color:white;
+        }
+        #screen.now {
+            background-color: greenyellow;
+        }
+
+    </style>    
+
 </head>
 <body>
     <div id="root"></div>
