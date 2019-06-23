@@ -68,15 +68,26 @@ class ResponseCheck extends Component {
         return result.length === 0 ? null : <> <div> 평균 시간: {result.reduce((a, c) => a + c) / result.length}ms</div> </>
     };
 
+    // 리셋 버튼 만들기.
+    resetBtn = () => {
+        const { result } = this.state;
+
+        this.setState({
+            result : '',
+        });
+    };
+
     render() {
-        const {state, message} = this.state;
+        const {state, message, result} = this.state;
         return (
             <>
                 <div id="screen" className={state} onClick={this.onClickScreen}>
                   {message}
                 </div>
-
                 {this.renderAverge()}
+                <button onClick={this.resetBtn} >리셋</button>
+                
+                {result + ' '}
             </>
         )
     }
