@@ -42,13 +42,8 @@ const ResponseCheck_hooks = () => {
 
             console.log('시간차이:', endTime.current - startTime.current);
 
-            setMessage( (prevMessage) => {
-                return '클릭해서 시작하세요.';
-            });
-
-            setMessage( (prevMessage) => {
-                return '클릭해서 시작하세요.';
-            });
+            setState('waiting');
+            setMessage('클릭해서 시작하세요.');
 
             setResult( (prevResult) => {
                 return [...prevResult, endTime.current - startTime.current];
@@ -61,12 +56,19 @@ const ResponseCheck_hooks = () => {
         return result.length === 0 ? null : <> <div> 평균 시간: {result.reduce((a, c) => a + c) / result.length}ms</div> </>
     };
 
+    // 리셋 버튼 만들기.
+    const resetBtn = () => {
+        setResult('');
+    };    
+
     return (
         <>
             <div id="screen" className={state} onClick={onClickScreen} >
                 {message}
             </div>
             {renderAverge()}
+
+            <button onClick={resetBtn}>리셋</button>
         </>
     );
 
