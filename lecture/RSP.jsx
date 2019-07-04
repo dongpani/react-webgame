@@ -13,35 +13,13 @@ const scores = {
     보: -1,
 };
 
-/**
- * 이겼을 때
- * 바위 0   가위 -142
- * 가위 -142    보 -284
- * 보 -284  바위 0
- * 
- * 졌을 때
- * 바위 0   보 -284
- * 가위 -142    바위 0
- * 보 -284  가위 -142
- * 
- * 비겼을 때: 서로 좌표값이 같을 때
- * 
- **/
 
-/*
- * 이겼을 때
- * 바위 0   가위 1
- * 가위 1    보 -1
- * 보 -1  바위 0
- * 
- * 졌을 때
- * 바위 0   보 -1
- * 가위 1    바위 0
- * 보 -1  가위 1
- * 
- * 비겼을 때: 서로 좌표값이 같을 때
- * 
- */ 
+// 좌표값으로 key 값을 반환
+const cpuChoice = (cpuChoiceRSP) => {
+    return Object.entries(rspCoords).find(function(v) {
+        return v[1] === cpuChoiceRSP;
+    })[0];
+};
 
 
 class RSP extends Component {
@@ -92,24 +70,21 @@ class RSP extends Component {
     };
 
     onClickBtn = (choice) => {
-        const { imgCoord } = this.state;
+        const { imgCoord } = this.state; // 컴퓨터의 좌표값
+        let myScore = scores[choice];  // 나의 스코어를 가져옴.
+        let cpuScore = scores[cpuChoice(imgCoord)];
+      
+        console.log('마이 초이스', myScore, '컴퓨터 초이스: ', cpuScore);
 
-        // console.log('choice 값', choice);
-        // console.log('버튼1: ', rspCoords[choice]); // 내가 누른 좌표
-        // console.log('imgCoord: ', imgCoord); // 컴퓨터 랜덤 좌표
+        // 이겼을 떄
 
-        let myHand = rspCoords[choice];
-
-        // 이겼을 때
-
-        if(myHand === 0 && imgCoord === '-142px' || myHand === '-142px' && imgCoord === '-284px' || myHand === '-284px' && imgCoord === 0) {
-            console.log('이겨따!!!!');
+        if([2, -1].includes(myScore - cpuScore)) {
+            console.log('이겨따!!!');
+        } else if([1, -2].includes(myScore - cpuScore)) {  // 졌을 떄
+            console.log('졌다...졌다!!!!!');
+        } else if(myScore === cpuScore) {
+            console.log('한번 더 하자!!');
         }
-
-        // 졌을 떄
-
-        // 비겼을 때
-        
 
     };
 
