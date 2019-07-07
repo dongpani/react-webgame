@@ -63,38 +63,36 @@ class RSP extends Component {
     };
 
     onClickBtn = (choice) => {
-        const { imgCoord, score } = this.state; // 컴퓨터의 좌표값
+        const { imgCoord, score, result} = this.state; // 컴퓨터의 좌표값
         let myScore = scores[choice];  // 나의 스코어를 가져옴.
         let cpuScore = scores[cpuChoice(imgCoord)];
       
-        // console.log('마이 초이스', myScore, '컴퓨터 초이스: ', cpuScore);
-
         // 이겼을 떄
-
         if([2, -1].includes(myScore - cpuScore)) {
-            console.log('이겨따!!!');
-            console.log('score =', score);
-
             this.setState( (prevState) => {
                 // console.log('status :', prevState);
                 return {
                     score: prevState.score + 1,
+                    result: '이겨따!!',
                 }
             });
 
             // this.setState
-        } else if([1, -2].includes(myScore - cpuScore)) {  // 졌을 떄
-            console.log('졌다...졌다!!!!!');
-
+        } else if([1, -2].includes(myScore - cpuScore)) {  // 졌을 때
             this.setState( (prevState) => {
                 return {
                     score: prevState.score - 1,
+                    result: '졌다...졌다!!!!!',
                 }
             });
 
         } else if(myScore === cpuScore) {
-            console.log('한번 더 하자!!');
+            this.setState({
+                result: '한번 더!!!!',
+            });
         }
+
+        clearInterval(this.interval);
 
     };
 
@@ -109,10 +107,8 @@ class RSP extends Component {
                     <button id="rock" className="btn" onClick={ () => this.onClickBtn('바위')}>바위</button>
                     <button id="scissor" className="btn" onClick={ () => this.onClickBtn('가위')}>가위</button>
                     <button id="paper" className="btn" onClick={ () => this.onClickBtn('보')}>보</button>
-                    <div>{result}</div>
+                    <div>게임 결과: {result}</div>
                     <div>현재: {score} 점</div>
-                    {/* <button id="replay">다시하기</button>
-                    <button id="stop">멈춤</button> */}
                 </div>
             </>
         );
