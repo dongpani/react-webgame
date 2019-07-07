@@ -13,7 +13,6 @@ const scores = {
     보: -1,
 };
 
-
 // 좌표값으로 key 값을 반환
 const cpuChoice = (cpuChoiceRSP) => {
     return Object.entries(rspCoords).find(function(v) {
@@ -36,14 +35,8 @@ class RSP extends Component {
     componentDidMount() { // 컴포넌트가 첫 렌더링 된 후
        
         this.interval = setInterval( () => {
-            // console.log('hi');
             const {imgCoord} = this.state;
             
-            // console.log('imgCoord', typeof imgCoord, ', ', typeof rspCoords.바위);
-            // console.log('rspCoords', rspCoords.바위);
-            // console.log('rspCoords', rspCoords.가위);
-            // console.log('rspCoords', rspCoords.보);
-
             if(imgCoord === rspCoords.바위) {
                 this.setState({
                     imgCoord: rspCoords.가위,
@@ -70,18 +63,35 @@ class RSP extends Component {
     };
 
     onClickBtn = (choice) => {
-        const { imgCoord } = this.state; // 컴퓨터의 좌표값
+        const { imgCoord, score } = this.state; // 컴퓨터의 좌표값
         let myScore = scores[choice];  // 나의 스코어를 가져옴.
         let cpuScore = scores[cpuChoice(imgCoord)];
       
-        console.log('마이 초이스', myScore, '컴퓨터 초이스: ', cpuScore);
+        // console.log('마이 초이스', myScore, '컴퓨터 초이스: ', cpuScore);
 
         // 이겼을 떄
 
         if([2, -1].includes(myScore - cpuScore)) {
             console.log('이겨따!!!');
+            console.log('score =', score);
+
+            this.setState( (prevState) => {
+                // console.log('status :', prevState);
+                return {
+                    score: prevState.score + 1,
+                }
+            });
+
+            // this.setState
         } else if([1, -2].includes(myScore - cpuScore)) {  // 졌을 떄
             console.log('졌다...졌다!!!!!');
+
+            this.setState( (prevState) => {
+                return {
+                    score: prevState.score - 1,
+                }
+            });
+
         } else if(myScore === cpuScore) {
             console.log('한번 더 하자!!');
         }
