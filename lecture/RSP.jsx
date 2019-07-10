@@ -22,7 +22,7 @@ const cpuChoice = (cpuChoiceRSP) => {
 
 
 class RSP extends Component {
-   
+
     // 초기상태값
     state = {
         result: '',   // 결과
@@ -32,26 +32,26 @@ class RSP extends Component {
 
     interval;
 
-    componentDidMount() { // 컴포넌트가 첫 렌더링 된 후
-       
-        this.interval = setInterval( () => {
-            const {imgCoord} = this.state;
-            
-            if(imgCoord === rspCoords.바위) {
-                this.setState({
-                    imgCoord: rspCoords.가위,
-                });
-            } else if(imgCoord === rspCoords.가위) {
-                this.setState({
-                    imgCoord: rspCoords.보,
-                });
-            } else if(imgCoord === rspCoords.보) {
-                this.setState({
-                    imgCoord: rspCoords.바위,
-                });                
-            }
+    changeRSP = () => {
+        const {imgCoord} = this.state;
+        
+        if(imgCoord === rspCoords.바위) {
+            this.setState({
+                imgCoord: rspCoords.가위,
+            });
+        } else if(imgCoord === rspCoords.가위) {
+            this.setState({
+                imgCoord: rspCoords.보,
+            });
+        } else if(imgCoord === rspCoords.보) {
+            this.setState({
+                imgCoord: rspCoords.바위,
+            });                
+        }
+    };    
 
-        }, 1000);
+    componentDidMount() { // 컴포넌트가 첫 렌더링 된 후      
+        this.interval = setInterval(this.changeRSP, 1000);
     }
 
     componentDidUpdate() { // 리렌더링 후
@@ -66,6 +66,8 @@ class RSP extends Component {
         const { imgCoord, score, result} = this.state; // 컴퓨터의 좌표값
         let myScore = scores[choice];  // 나의 스코어를 가져옴.
         let cpuScore = scores[cpuChoice(imgCoord)];
+
+        clearInterval(this.interval);
       
         // 이겼을 떄
         if([2, -1].includes(myScore - cpuScore)) {
@@ -92,8 +94,10 @@ class RSP extends Component {
             });
         }
 
-        clearInterval(this.interval);
-
+        setTimeout(() => {
+            this.interval = setInterval(this.changeRSP, 1000);
+        }, 2000);
+        
     };
 
     render() {
