@@ -336,4 +336,44 @@ shouldComponentUpdate(nextProps, nextState, nextContext) {
 - pureComponent : 위에거 보다 간단함. 하지만 렌더링 분기처리는 불가능.
 
 
+### 리액트 render에서 함수 호출 패턴
 
+
+- 가위바위보게임(class)
+
+
+onClick함수 호출하는 부분이 가독성이 좋지 않다.
+
+```
+<div>
+	<button id="rock" className="btn" onClick={ () => this.onClickBtn('바위')}>바위</button>
+	<button id="scissor" className="btn" onClick={ () => this.onClickBtn('가위')}>가위</button>
+	<button id="paper" className="btn" onClick={ () => this.onClickBtn('보')}>보</button>
+	<div>게임 결과: {result}</div>
+	<div>현재: {score} 점</div>
+</div>
+```
+
+- 함수 호출
+
+```
+  onClickBtn = (choice) =>   
+```
+
+아래처럼 가독성 좋게 변경할 수 있음. (이 패턴을 많이 사용)
+
+```
+<div>
+	<button id="rock" className="btn" onClick={this.onClickBtn('바위')}>바위</button>
+	<button id="scissor" className="btn" onClick={this.onClickBtn('가위')}>가위</button>
+	<button id="paper" className="btn" onClick={this.onClickBtn('보')}>보</button>
+	<div>게임 결과: {result}</div>
+	<div>현재: {score} 점</div>
+</div>
+```
+
+- 함수 호출
+
+```
+  onClickBtn = (choice) => () =>
+```
