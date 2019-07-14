@@ -220,7 +220,7 @@ npm i -D webpack-dev-server
   "scripts": {
     "dev": "webpack-dev-server --hot"
   },
-```  
+```
 
 - client.jsx 소스 수정
 
@@ -277,7 +277,7 @@ ReactDom.render(<Hot />, document.querySelector('#root'));
         );
         })}
     </ul>
-```             
+```
 
 - key
 
@@ -301,7 +301,7 @@ ReactDom.render(<Hot />, document.querySelector('#root'));
         );
         })}
     </ul>
-```       
+```
 - 중요한것은 반복믄을 key 로 사용할 때 반드시 태그안에 key 값을 지정해줘야 한다. (고유값 : PK 성질을 가짐.)
 이것은 브라우저 성능 최적화를 위해서 이지만 작업을 하다보면 여간 귀찮은게 아니다.
 주의할 점은 map 함수의 인덱스로 key 값을 지정하면 안된다.
@@ -377,3 +377,59 @@ onClick함수 호출하는 부분이 가독성이 좋지 않다.
 ```
   onClickBtn = (choice) => () =>
 ```
+
+
+
+### 라이프사이클
+
+리액트 컴포넌트가 생성되고 소멸되는 주기를 <b>라이프사이클</b> 이라고 한다.
+
+class 와 hooks 각각에서 라이프사이클을 사용하는 방법이 다르다.
+
+
+
+- class 에서의 라이프사이클
+
+  - ​    componentDidMount()  : 컴포넌트가 생성 된 직후
+
+    ​    componentDidUpdate() : 컴포넌트가 다시 렌더링 된 직후
+
+    ​    componentWillUnmount() : 컴포넌트가 제거되기 전
+
+    
+
+- hooks 에서의 라이프사이클
+
+  - useEffect()
+
+
+
+hooks 에서는 useEffect 로 위에 3개의 기능을 모두 사용할 수 있다.
+
+
+
+
+
+## 숫자야구만들기
+
+숫자가 다른 공이 하나씩 늘어나면서 보여주기 때문에, 비동기 처리가 많이 들어감.
+
+
+
+- 화살표함수에서 return 생략. (기존코드)
+
+  ```javascript
+  var 후보군 = Array(45).fill().map(function(요소, 인덱스) {
+      return 인덱스 + 1;
+  });
+  ```
+
+- 화살표 함수 사용
+
+  ```javascript
+      var candidate = Array(45).fill().map( (v, i) => i + 1);
+  ```
+
+
+
+- 반복문을 기점으로 컴포넌트를 분리
