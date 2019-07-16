@@ -38,10 +38,16 @@ class Lotto extends Component {
     };
 
     render() {
+        const { winBalls, bonus, redo } = this.state  // 구조분해
         return (
             <>
-                <div id="lotto"></div>
-                <div className="bonus"></div>
+                <div>당첨 숫자</div>
+                <div id="결과창">
+                    { winBalls.map( (v) => <Ball key={v} number={v}  />)}
+                </div>
+                <div>보너스</div>
+                {bonus && <Ball number={bonus} />}
+                <button onClick={redo ? this.onClickRedo : () => {}}>한 번 더!</button>
             </>
         );
     }

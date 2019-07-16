@@ -433,3 +433,20 @@ hooks 에서는 useEffect 로 위에 3개의 기능을 모두 사용할 수 있�
 
 
 - 반복문을 기점으로 컴포넌트를 분리
+
+  ```react
+  <div>당첨 숫자</div>
+  <div id="결과창">
+      { winBalls.map( (v) => <Ball key={v} number={v}  />)}
+  </div>
+  ```
+
+  
+
+- 분리된 컴포넌트는 view 만 담당하므로, pureComponent 로 한다.
+
+  ```javascript
+  
+  ```
+
+  
