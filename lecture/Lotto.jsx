@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Ball from './Ball';
 
 // 로또 추첨.
 function getWinNumbers() {
@@ -27,14 +28,38 @@ class Lotto extends Component {
         redo: false,
     };
 
+    timouts = [];
 
     componentDidMount() { // 컴포넌트가 첫 렌더링 된 후
+        const { winNumbers } = this.state;
+
+        // let 을 사용해  클로저 문제 해결.
+        for (let i=0; i < this.state.winNumbers.length -1; i++) {
+            this.timouts[i] = setTimeout( () => {
+                this.setState( (prevState) => {
+                    return {
+                        winBalls: [...prevState.winBalls, winNumbers[i]],
+                    }                    
+                });
+            }, (i + 1) * 1000);
+        }
+
+        this.timouts[6] = setTimeout(() => {
+            this.setState( {
+                bonus: winNumbers[6],
+                redo: true,
+            });
+        }, 7000);
+
     };
 
     componentDidUpdate() { // 리렌더링 후
     };
 
     componentWillUnmount() { // 컴포넌트가 제거되기 직전
+        this.timeout.forEach( (v) => {
+            clearTimeout(v);
+        });
     };
 
     render() {
