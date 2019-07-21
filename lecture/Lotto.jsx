@@ -30,7 +30,7 @@ class Lotto extends Component {
 
     timouts = [];
 
-    componentDidMount() { // 컴포넌트가 첫 렌더링 된 후
+    runTimeouts = () => {
         const { winNumbers } = this.state;
 
         // let 을 사용해  클로저 문제 해결.
@@ -50,16 +50,36 @@ class Lotto extends Component {
                 redo: true,
             });
         }, 7000);
-
     };
 
-    componentDidUpdate() { // 리렌더링 후
+    componentDidMount() { // 컴포넌트가 첫 렌더링 된 후
+        this.runTimeouts();
+    };
+
+    componentDidUpdate(prevProps, prevState) { // 컴포넌트가 변경되었을 때
+      const { winBalls } = this.state;
+
+         if (winBalls.length === 0) {
+            this.runTimeouts();
+         }
     };
 
     componentWillUnmount() { // 컴포넌트가 제거되기 직전
         this.timeout.forEach( (v) => {
             clearTimeout(v);
         });
+    };
+
+    onClickRedo = () => {
+        this.setState({
+            winNumbers: getWinNumbers(),
+            winBalls:[],
+            bonus: null,
+            redo: false,
+        });
+
+        this.timouts = [];
+
     };
 
     render() {
@@ -72,7 +92,8 @@ class Lotto extends Component {
                 </div>
                 <div>보너스</div>
                 {bonus && <Ball number={bonus} />}
-                <button onClick={redo ? this.onClickRedo : () => {}}>한 번 더!</button>
+                {redo && <button onClick={this.onClickRedo} >한번 더!!</button> }
+
             </>
         );
     }

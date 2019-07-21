@@ -418,14 +418,12 @@ hooks 에서는 useEffect 로 위에 3개의 기능을 모두 사용할 수 있�
 
 - 화살표함수에서 return 생략. (기존코드)
 
-  - Lotto.jsx
-
   ```react
-  var 후보군 = Array(45).fill().map(function(요소, 인덱스) {
+var 후보군 = Array(45).fill().map(function(요소, 인덱스) {
       return 인덱스 + 1;
   });
   ```
-
+  
 - 화살표 함수 사용
 
   ```react
@@ -447,12 +445,10 @@ hooks 에서는 useEffect 로 위에 3개의 기능을 모두 사용할 수 있�
 
 - 분리된 컴포넌트는 view 만 담당하므로 pureComponent 또는 memo 를 적용
 
-  - Ball.jsx
-  
   ```react
-import React, { memo } from 'react';
+  import React, { memo } from 'react';
   
-  // hooks가 아닌 함수로 부모컴포넌트에서 props 를 받음.
+// hooks가 아닌 함수로 부모컴포넌트에서 props 를 받음.
   const Ball = memo(({number}) =>  {
   
           let background;
@@ -479,44 +475,60 @@ import React, { memo } from 'react';
   
 - setTimeout 사용하기.
 
-  - Lotto.jsx
+  ```react
+    componentDidMount() { // 컴포넌트가 첫 렌더링 된 후
+          const { winNumbers } = this.state;
+  
+          // let 을 사용해  클로저 문제 해결.
+          for (let i=0; i < this.state.winNumbers.length -1; i++) {
+              this.timouts[i] = setTimeout( () => {
+                  this.setState( (prevState) => {
+                      return {
+                          winBalls: [...prevState.winBalls, winNumbers[i]],
+                      }                    
+                  });
+              }, (i + 1) * 1000);
+          }
+  
+          this.timouts[6] = setTimeout(() => {
+              this.setState( {
+                  bonus: winNumbers[6],
+                  redo: true,
+              });
+          }, 7000);
+  
+      };
+  ```
+  
+  - 컴포넌트가 실행 할때 적용한다.
+- 반복문 안에 비동기 함수를 넣으면 클로저 문제가 생기지만 ES6에서 let 이 추가되면서 그 문제를 해결했다.
+  
+  
 
-    ```react
-        componentDidMount() { // 컴포넌트가 첫 렌더링 된 후
-            const { winNumbers } = this.state;
-    
-            // let 을 사용해  클로저 문제 해결.
-            for (let i=0; i < this.state.winNumbers.length -1; i++) {
-                this.timouts[i] = setTimeout( () => {
-                    this.setState( (prevState) => {
-                        return {
-                            winBalls: [...prevState.winBalls, winNumbers[i]],
-                        }                    
-                    });
-                }, (i + 1) * 1000);
-            }
-    
-            this.timouts[6] = setTimeout(() => {
-                this.setState( {
-                    bonus: winNumbers[6],
-                    redo: true,
-                });
-            }, 7000);
-    
-        };
-    ```
+- setTimeout 초기화
 
-    - 컴포넌트가 실행 할때 적용한다.
-    - 반복문 안에 비동기 함수를 넣으면 클로저 문제가 생기지만 ES6에서 let 이 추가되면서 그 문제를 해결했다.
+  ```react
+      componentWillUnmount() { // 컴포넌트가 제거되기 직전
+          this.timeout.forEach( (v) => {
+              clearTimeout(v);
+          });
+      };
+  ```
 
-  - setTimeout 초기화
+  계속 실행 되므로 반드시 컴포넌트가 제거 될 때 초기화 해줘야 함.
 
-    ```react
-        componentWillUnmount() { // 컴포넌트가 제거되기 직전
-            this.timeout.forEach( (v) => {
-                clearTimeout(v);
-            });
-        };
-    ```
+  
 
-    - setTimeout 과 같이 계속 실행되는 애들은 반드시 초기화를 해줘야 한다.
+- componentDidUpdate 사용하기
+
+  ```react
+      componentDidUpdate(prevProps, prevState) { // 컴포넌트가 변경되었을 때
+        const { winBalls } = this.state;
+  
+           if (winBalls.length === 0) {
+              this.runTimeouts();
+           }
+      };
+  ```
+
+  한번 더 버튼을 눌렀을 때 실행 되게끔 처리. 라이프사이클에서 DidUpdate 는 컴포넌트가 변경 될 때마다 계속 실행되므로, 반드시 분기처리를 하여 실행을 제어해야 한다.
