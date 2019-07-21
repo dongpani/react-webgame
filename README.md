@@ -432,7 +432,7 @@ hooks 에서는 useEffect 로 위에 3개의 기능을 모두 사용할 수 있�
   ```react
   import React, { memo } from 'react';
   
-// hooks가 아닌 함수로 부모컴포넌트에서 props 를 받음.
+  // hooks가 아닌 함수로 부모컴포넌트에서 props 를 받음.
   const Ball = memo(({number}) =>  {
   
           let background;
@@ -454,11 +454,12 @@ hooks 에서는 useEffect 로 위에 3개의 기능을 모두 사용할 수 있�
               <div className="ball" style={{ background }}> {number} </div>
           );    
   });
+  
   export default Ball;
   ```
+
   
-  
-  
+
 - setTimeout 사용하기.
 
   ```react
