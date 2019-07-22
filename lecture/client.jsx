@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import { hot } from 'react-hot-loader/root';
 
-import ClientView from './Lotto';
+import ClientView from './Lotto_hooks';
 
 const Hot = hot(ClientView);
 
