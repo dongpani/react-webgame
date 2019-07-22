@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useMemo } from 'react';
+import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import Ball from './Ball';
 
 // 로또 추첨.
@@ -59,9 +59,9 @@ const Lotto_hooks = () => {
 
     }, [timeout.current]);
 
-    
-    const onClickRedo = () => {
+    const onClickRedo = useCallback( () => {
         console.log('onClickRedo');
+        console.log('winNumbers : ', winNumbers);
 
         setWinNumbers(getWinNumbers());
         setWinBalls([]);
@@ -70,7 +70,7 @@ const Lotto_hooks = () => {
 
         timeout.current = [];
 
-    };
+    }, [winNumbers]);
 
     return (
         <>
