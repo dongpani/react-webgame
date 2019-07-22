@@ -528,3 +528,38 @@ hooks 에서는 useEffect 로 위에 3개의 기능을 모두 사용할 수 있�
 
 ## 로또 추첨기 만들기 hooks
 
+
+
+- useEffect 로 라이프 사이클 구현하기.
+
+  ```react
+      useEffect(() => {
+          runTimeouts();
+  
+          return () => {
+              timeout.current.forEach( (v) => {
+                  clearTimeout(v);
+              });            
+          }
+  
+      }, [timeout.current]);
+  ```
+
+  - useEffect 의 2번쨰 인자는 componentDidMount 와 componentDidUpdate 를 동시에 수행한다.
+  - 그렇기에 반드시 업데이트 되는 인자만 넣어줘야한다.
+
+
+
+- useMemo :  hooks 는 계속해서 함수를 호출한다. 그래서 연속되서 호출 되는 것들을 캐시로 등록해 지속적인 렌더링으로 성능저하를 막는다.
+
+  ```react
+  import React, { useState, useRef, useEffect, useMemo } from 'react';
+  ```
+
+  - 상단에  useMemo 를 import 시킨다.
+
+  ```react
+  const lottoNumbers = useMemo( () => getWinNumbers(), []);
+  ```
+
+  - 함수를 호출하는 부분을 useMemo 로 등록한다.

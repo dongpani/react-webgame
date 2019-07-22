@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import Ball from './Ball';
 
 // 로또 추첨.
@@ -22,7 +22,8 @@ function getWinNumbers() {
 
 // class Lotto_hooks extends Component {
 const Lotto_hooks = () => {
-    const [winNumbers, setWinNumbers] = useState(getWinNumbers());
+    const lottoNumbers = useMemo( () => getWinNumbers(), []);
+    const [winNumbers, setWinNumbers] = useState(lottoNumbers);
     const [winBalls, setWinBalls] = useState([]);
     const [bonus, setBonus] = useState(null);
     const [redo, setRedo] = useState(false);
@@ -56,7 +57,7 @@ const Lotto_hooks = () => {
             });            
         }
 
-    }, [timeout.current]);    
+    }, [timeout.current]);
 
     
     const onClickRedo = () => {
