@@ -566,6 +566,7 @@ hooks 에서는 useEffect 로 위에 3개의 기능을 모두 사용할 수 있�
 
 
 
-> > >useMemo : 함수의 결과값을 기억
-> > >
-> > >useRef : 일반 값을 기억
+> <b>useMemo : 함수의 결과값을 기억</b>
+>
+> <b>useRef : 일반 값을 기억</b>
+
