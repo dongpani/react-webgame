@@ -1,11 +1,19 @@
 # React-webgame
-제로초님 리액트 기초 웹게임 강좌
+<u>제로초님 리액트 기초 웹게임 강좌</u>
 
 
 
-[로또 추첨기 만들기](#tictoctoe)
+- [리액트 시작하기](#setup)
+- [리액트 반복문](#repeat)
+- [컴포넌트 렌더링](#componentUpdate)
+- [라이프사이클](#lifeCycle)
+- [로또추첨기](#lotto)
+- [로또추첨기 - hooks](#lotto_hooks)
+- [틱택토](#tictactoe)
 
 
+
+<a name="setup"></a>
 
 ## 첫 번째 리액트 컴포넌트 생성
 
@@ -268,6 +276,11 @@ ReactDom.render(<Hot />, document.querySelector('#root'));
 
 <hr>
 
+
+<a name="repeat"></a>
+
+
+
 ## 리액트에서의 반복문
 
 - map
@@ -311,6 +324,12 @@ ReactDom.render(<Hot />, document.querySelector('#root'));
 - 중요한것은 반복믄을 key 로 사용할 때 반드시 태그안에 key 값을 지정해줘야 한다. (고유값 : PK 성질을 가짐.)
 이것은 브라우저 성능 최적화를 위해서 이지만 작업을 하다보면 여간 귀찮은게 아니다.
 주의할 점은 map 함수의 인덱스로 key 값을 지정하면 안된다.
+
+
+
+<a name="componentUpdate"></a>
+
+
 
 
 ### shouldComponentUpdate
@@ -386,6 +405,10 @@ onClick함수 호출하는 부분이 가독성이 좋지 않다.
 
 
 
+<a name="lifeCycle"></a>
+
+
+
 ### 라이프사이클
 
 리액트 컴포넌트가 생성되고 소멸되는 주기를 <b>라이프사이클</b> 이라고 한다.
@@ -413,6 +436,8 @@ class 와 hooks 각각에서 라이프사이클을 사용하는 방법이 다르
 hooks 에서는 useEffect 로 위에 3개의 기능을 모두 사용할 수 있다.
 
 
+
+<a name="lotto"></a>
 
 
 
@@ -532,6 +557,10 @@ hooks 에서는 useEffect 로 위에 3개의 기능을 모두 사용할 수 있�
 
 
 
+<a name="lotto_hooks"></a>
+
+
+
 ## 로또 추첨기 만들기 hooks
 
 
@@ -611,13 +640,11 @@ hooks 에서는 useEffect 로 위에 3개의 기능을 모두 사용할 수 있�
 
 
 
-
-
-## 틱택토 만들기 <a name="tictoctoe"> </a>
-
+<a name="tictactoe"></a>
 
 
 
+## 틱택토 만들기
 
 - 테이블 컴포넌트 분리 (table, tr, td)
 
