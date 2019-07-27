@@ -11,7 +11,7 @@ function getWinNumbers() {
         shuffle.push(candidate.splice(Math.floor(Math.random() * candidate.length), 1)[0]);
     }
 
-    console.log('shuffle: ', shuffle);
+    //console.log('shuffle: ', shuffle);
 
     const bonusNumber  = shuffle[shuffle.length - 1];
     const winNumbers  = shuffle.splice(0, 6).sort( (c, p) => c - p );

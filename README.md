@@ -1,6 +1,12 @@
 # React-webgame
 제로초님 리액트 기초 웹게임 강좌
 
+
+
+[로또 추첨기 만들기](#tictoctoe)
+
+
+
 ## 첫 번째 리액트 컴포넌트 생성
 
 ```
@@ -602,3 +608,174 @@ hooks 에서는 useEffect 로 위에 3개의 기능을 모두 사용할 수 있�
 
 
 - useCallBack 을 반드시 사용해야 할때 : 자식 컴포넌트에 props 로 함수를 넘길 때.
+
+
+
+
+
+## 틱택토 만들기 <a name="tictoctoe"> </a>
+
+
+
+
+
+- 테이블 컴포넌트 분리 (table, tr, td)
+
+  ```react
+  import React from 'react';
+  import Tr from './Tr';
+  
+  const Table = () => {  
+      return (
+          <Tr>{''}</Tr>
+      );
+  };
+  
+  export default Table;
+  ```
+
+  - table > tr > td 순으로 컴포넌트를 분리하고 순차적으로 import 한다.
+
+  
+
+- useReducer 사용
+
+  ```react
+  import React, {useState, useReducer} from 'react';
+  import Table from './Table';
+  
+  const initialState = {
+      winner: '',
+      turn: 0,
+      tableData : [ ['','',''], ['','',''], ['','',''] ],
+  };
+  
+  const reducer = (state, action) => {
+  
+  };
+  
+  
+  const TicTacToe = () => {
+      const [state, dispatch] = useReducer(reducer, initialState);
+  
+      return (
+          <>           
+              <Table />
+              {winner && <div>{winner}님의 승리</div>}
+          </>
+      );
+  }
+  
+  export default TicTacToe;
+  ```
+
+  - useState 를 사용하지 않았다.
+  - 최상위 컴포넌트 (TicTacToe) 에서 이벤트는 td 에서 발생되는데, 그럴려면 변경되는 값들을 최상위의 state 들을 td 컴포넌트로 props 로 전달해야한다. 관리도 어렵고 거쳐가야하는 단계가 많다.
+  - 그렇기 때문에 state 들을 한번에 묶어서 td 로 전달할 수 있는 기능이 useReduce 이다.
+
+
+
+- dispatch 와 3 x 3 테이블 만들기.
+
+  ```react
+  import React, {useState, useReducer, useCallback} from 'react';
+  import Table from './Table';
+  
+  const initialState = {
+      winner: '',
+      turn: 0,
+      tableData : [ ['','',''], ['','',''], ['','',''] ],
+  };
+  
+  const SET_WINNER = 'SET_WINNER'
+  
+  const reducer = (state, action) => {
+      switch( action.type) {
+          case SET_WINNER : 
+              return {
+                  ...state, 
+                  winner: action.winner,
+              };
+      }
+  };
+  
+  
+  const TicTacToe = () => {
+      const [state, dispatch] = useReducer(reducer, initialState);
+  
+      const onClickTable = useCallback( () => {
+          dispatch({ type: SET_WINNER, winner: 'O'});
+      }, []);
+  
+      return (
+          <>           
+              <Table onClick={onClickTable}  tableData={state.tableData}/>
+              {state.winner && <div>{state.winner}님의 승리</div>}
+          </>
+      );
+  }
+  
+  export default TicTacToe;
+  ```
+
+  - 테이블 클릭 이벤트에 dispatch 를 적용한다. (하위컴포넌트에 전달되므로 useCallback 함수 사용.)
+  - action.type 는 보통 변수로 따로 지정해두고 <b>대문자</b>를 사용한다.
+  - state 는 ... 복사를 사용해서 값을 바꿔줘야함.
+
+
+
+- state 전달 (Table)
+
+  ```react
+  import React from 'react';
+  import Tr from './Tr';
+  
+  const Table = ({onClick, tableData}) => {  
+      return (
+          <table onClick={onClick}>
+              {Array(tableData.length).fill().map( (tr, i) => (<Tr rowData={tableData[i]} />))}
+          </table>
+      );
+  };
+  
+  export default Table;
+  ```
+
+
+
+- state 전달 (Tr)
+
+  ```react
+  import React from 'react';
+  import Td from './Td';
+  
+  const Tr = ({ rowData }) => {  
+      return (
+          <tr>
+              {Array(rowData.length).fill().map( (td) => (<Td />))}
+          </tr>
+          
+      );
+  };
+  
+  export default Tr;
+  ```
+
+
+
+- state 전달 (Td)
+
+  ```react
+  import React from 'react';
+  
+  const Td = () => {  
+      return (
+          <td>{''}</td>
+      );
+  };
+  
+  export default Td;
+  ```
+
+  
+
