@@ -900,3 +900,175 @@ hooks 에서는 useEffect 로 위에 3개의 기능을 모두 사용할 수 있�
   - Td 컴포넌트에서 dispatch 를 통해 넘어온 action.type 와 값들을 가지고 분기처리한다.
   - JS 의 핵심 패러타임중에 하나인 데이터불변성을 지켜야하기 때문에 원시데이터는 얕은복사를 한다. 절대 현재 객체를 그냥 바꿔버리면 안된다.
   - 연관된 컴포넌트에 dispatch 를 할당 받는다. (부모-자식 컴포넌트가 많을 수록 노가다)
+
+
+
+- 중복 클릭 막기
+
+  ```react
+  import React, {useCallback} from 'react';
+  import { CLICK_CELL } from './TicTacToe';
+  
+  const Td = ( {rowIndex, cellIndex, dispatch, cellData} ) => {  
+  
+      // 칸을 클릭 했을 때 행번호와, 칸 번호를 보낸다.
+      const onClickTd = useCallback( () => {
+          if(cellData) return;
+  
+          console.log(rowIndex, cellIndex);
+           dispatch({ type: CLICK_CELL, row: rowIndex, cell: cellIndex  });         
+      }, [cellData]);
+  
+      return (
+          <td onClick={onClickTd}>{cellData}</td>
+      );
+  };
+  
+  export default Td;
+  ```
+
+  - if(cellData) return 
+
+  - useCallBack 두번째 인자를 꼭 넣어줘야함.
+
+    
+
+- 승리체크하기
+
+  ```react
+  import React, {useState, useReducer, useCallback, useEffect} from 'react';
+  import Table from './Table';
+  
+  const initialState = {
+      winner: '',
+      turn: 'O',
+      tableData : [ 
+                      ['','',''],
+                      ['','',''],
+                      ['','',''],
+                  ],
+      recentCell: [-1, -1], 
+  };
+  
+  export const SET_WINNER = 'SET_WINNER';
+  export const CLICK_CELL = 'CLICK_CELL';
+  export const CHANGE_TURN = 'CHANGE_TURN';
+  export const RESET_GAME = 'RESET_GAME';
+  
+  const reducer = (state, action) => {
+      switch( action.type) {
+          case SET_WINNER : 
+              return {
+                  ...state, 
+                  winner: action.winner,
+              };
+              
+          case CLICK_CELL : {
+              const tableData = [...state.tableData];
+              tableData[action.row] = [...tableData[action.row]];           
+              tableData[action.row][action.cell] = state.turn;
+              return {
+                  ...state,
+                  tableData,
+                  recentCell : [action.row, action.cell],
+              };
+          }
+          
+          case CHANGE_TURN : {
+              return {
+                  ...state,
+                  turn: state.turn === 'O' ? 'X' : 'O',
+              };
+          }
+  
+          case RESET_GAME : {
+              return {
+                  ...state,
+                  winner: '',
+                  turn: 'O',
+                  tableData : [ 
+                                  ['','',''],
+                                  ['','',''],
+                                  ['','',''],
+                              ],
+                  recentCell: [-1, -1],                 
+              };
+          };
+  
+          default : 
+              return state;
+  
+      }
+  };
+  
+  const TicTacToe = () => {
+      const [state, dispatch] = useReducer(reducer, initialState);
+      const {tableData, turn, winner, recentCell} = state;
+  
+      useEffect( () => {
+          const [row, cell] = recentCell;
+  
+          if(row < 0)  return;
+  
+          let win = false;
+          console.log('tableDataRecent: ', tableData[row][cell]);
+          console.log('turn: ', turn);
+   
+          // 가로줄 검사
+  
+          if(tableData[row][0] === turn && tableData[row][1] === turn && tableData[row][2] === turn) {
+              win = true;
+          }
+          // 새로줄 검사
+          if(tableData[0][cell] === turn && tableData[1][cell] === turn && tableData[2][cell] === turn) {
+              win = true;
+          }        
+          // 대각선 검사 1
+          if(tableData[0][0] === turn && tableData[1][1] === turn && tableData[2][2] === turn) {
+              win = true;
+          }
+          // 대각선 검사 2
+          if(tableData[2][0] === turn && tableData[1][1] === turn && tableData[0][2] === turn) {
+              win = true;
+          }
+      
+          if(win) {
+              alert('이겨따');
+              dispatch({ type: SET_WINNER, winner: turn });
+              dispatch({ type: RESET_GAME });
+              
+          }else {
+              let all = true;
+              tableData.forEach( (row) => {
+                  row.forEach( (cell) => {
+                      if(!cell) {
+                          all = false;
+                      }
+                  });
+              });
+  
+              if(all) {
+                  console.log('무승부입니다.');
+              } else {
+                  dispatch({ type: CHANGE_TURN });
+              }
+          }
+         
+      }, [recentCell] );
+  
+      return (
+          <>           
+              <Table tableData={tableData} dispatch={dispatch}  />
+              {winner && <div>{winner}님의 승리</div>}
+          </>
+      );
+  }
+  
+  export default TicTacToe;
+  ```
+
+  - useEffect 적용
+  - dispatch 는 비동기이다. 그렇기 때문에 사용시 순서에 대해 신경을 써줘야 한다.
+  - 구조분해를 사용하여 코드를 조금 더 깔끔하게 정리하였다.
+  - 역시 라이프사이클 관리가 관건이다.
+
