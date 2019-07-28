@@ -804,5 +804,99 @@ hooks 에서는 useEffect 로 위에 3개의 기능을 모두 사용할 수 있�
   export default Td;
   ```
 
-  
 
+
+
+- 칸에 이벤트 리스너 달기
+
+  ```react
+  import React, {useCallback} from 'react';
+  import { CLICK_CELL, CHANGE_TURN } from './TicTacToe';
+  
+  const Td = ( {rowIndex, cellIndex, dispatch, cellData} ) => {  
+  
+      // 칸을 클릭 했을 때 행번호와, 칸 번호를 보낸다.
+      const onClickTd = useCallback( () => {
+          console.log(rowIndex, cellIndex);
+           dispatch({ type: CLICK_CELL, row: rowIndex, cell: cellIndex  });
+           dispatch({ type: CHANGE_TURN });
+      }, []);
+  
+      return (
+          <td onClick={onClickTd}>{cellData}</td>
+      );
+  };
+  
+  export default Td;
+  ```
+
+  - 테이블에 칸을 클릭했을 때 이벤트가 발생해야 하므로, Td 컴포넌트에 이벤트를 등록한다.
+  - 칸을 클릭했을 때 그 칸이 어떤 칸인지 구분을 해야하기 때문에 rowIndex 와 cellIndex 를 dispatch 를 통해 최상위 컴포넌트로 넘겨준다. 이때, action.type 은 모듈로 등록이 되어있어야하고 사용하고자하는 컴포넌트에서 import 해야한다.
+
+
+
+- reducer 분기처리 와 dispatch 의 전달.
+
+  ```react
+  import React, {useState, useReducer, useCallback} from 'react';
+  import Table from './Table';
+  
+  const initialState = {
+      winner: '',
+      turn: 'O',
+      tableData : [ 
+                      ['','',''],
+                      ['','',''],
+                      ['','',''],
+                  ],
+  };
+  
+  export const SET_WINNER = 'SET_WINNER';
+  export const CLICK_CELL = 'CLICK_CELL';
+  export const CHANGE_TURN = 'CHANGE_TURN';
+  
+  const reducer = (state, action) => {
+      switch( action.type) {
+          case SET_WINNER : 
+              return {
+                  ...state, 
+                  winner: action.winner,
+              };
+              
+          case CLICK_CELL : {
+              const tableData = [...state.tableData];
+              tableData[action.row] = [...tableData[action.row]];
+              tableData[action.row][action.cell] = state.turn;
+              return {
+                  ...state,
+                  tableData,
+              };
+          };
+          
+          case CHANGE_TURN : {
+              return {
+                  ...state,
+                  turn: state.turn === 'O' ? 'X' : 'O',
+              };
+          }
+  
+      }
+  };
+  
+  const TicTacToe = () => {
+      const [state, dispatch] = useReducer(reducer, initialState);
+  
+      return (
+          <>           
+              <Table tableData={state.tableData} dispatch={dispatch}  />
+              {state.winner && <div>{state.winner}님의 승리</div>}
+          </>
+      );
+  }
+  
+  export default TicTacToe;
+  ```
+
+  - Td 컴포넌트에서 dispatch 를 통해 넘어온 action.type 와 값들을 가지고 분기처리한다.
+  - JS 의 핵심 패러타임중에 하나인 데이터불변성을 지켜야하기 때문에 원시데이터는 얕은복사를 한다. 절대 현재 객체를 그냥 바꿔버리면 안된다.
+  - 연관된 컴포넌트에 dispatch 를 할당 받는다. (부모-자식 컴포넌트가 많을 수록 노가다)
