@@ -646,6 +646,8 @@ hooks 에서는 useEffect 로 위에 3개의 기능을 모두 사용할 수 있�
 
 ## 틱택토 만들기
 
+
+
 - 테이블 컴포넌트 분리 (table, tr, td)
 
   ```react
@@ -1071,4 +1073,45 @@ hooks 에서는 useEffect 로 위에 3개의 기능을 모두 사용할 수 있�
   - dispatch 는 비동기이다. 그렇기 때문에 사용시 순서에 대해 신경을 써줘야 한다.
   - 구조분해를 사용하여 코드를 조금 더 깔끔하게 정리하였다.
   - 역시 라이프사이클 관리가 관건이다.
+
+
+
+### 테이블 최적화 하기
+
+불필요한 데이터가 렌더링 되는 것을 제거하고, 유일하게 변하는 값만 지정해준다.
+
+- 하나의 칸을 클릭했는데, 모든칸이 렌더링 되는 경우
+
+  ```react
+  import React, {useCallback, useEffect, useRef} from 'react';
+  import { CLICK_CELL } from './TicTacToe';
+  
+  const Td = ( {rowIndex, cellIndex, dispatch, cellData} ) => {  
+      console.log('td Rendered');
+  
+      const ref = useRef([]);
+  
+      useEffect( () => {
+          console.log(rowIndex === ref.current[0],  cellIndex === ref.current[1], dispatch === ref.current[2], cellData === ref.current[3]);
+          ref.current = [rowIndex, cellIndex, dispatch, cellData];
+      }, [rowIndex, cellIndex, dispatch, cellData]);
+  
+  
+      // 칸을 클릭 했을 때 행번호와, 칸 번호를 보낸다.
+      const onClickTd = useCallback( () => {
+          if(cellData) return;
+           dispatch({ type: CLICK_CELL, row: rowIndex, cell: cellIndex  });         
+      }, [cellData]);
+  
+      return (
+          <td onClick={onClickTd}>{cellData}</td>
+      );
+  };
+  
+  export default Td;
+  ```
+
+  - useEffect 와 useRef 를 사용하여, 실제로 어떤 값이 변경되었는지 하나하나 console.log 를 찍어 확인한다.
+
+    ![1564442185210](C:\Users\power\AppData\Roaming\Typora\typora-user-images\1564442185210.png)
 
