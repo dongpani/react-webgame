@@ -1113,5 +1113,40 @@ hooks 에서는 useEffect 로 위에 3개의 기능을 모두 사용할 수 있�
 
   - useEffect 와 useRef 를 사용하여, 실제로 어떤 값이 변경되었는지 하나하나 console.log 를 찍어 확인한다.
 
-    ![1564442185210](C:\Users\power\AppData\Roaming\Typora\typora-user-images\1564442185210.png)
+
+
+- Td, Tr 컴포넌트에 memo 적용하기
+
+  ```react
+  import React, {useCallback, useEffect, useRef, memo} from 'react';
+  import { CLICK_CELL } from './TicTacToe';
+  
+  const Td =  memo( ( {rowIndex, cellIndex, dispatch, cellData} ) => {  
+      console.log('td Rendered');
+  
+      const ref = useRef([]);
+  
+      useEffect( () => {
+          console.log(rowIndex === ref.current[0],  cellIndex === ref.current[1], dispatch === ref.current[2], cellData === ref.current[3]);
+          ref.current = [rowIndex, cellIndex, dispatch, cellData];
+      }, [rowIndex, cellIndex, dispatch, cellData]);
+  
+  
+      // 칸을 클릭 했을 때 행번호와, 칸 번호를 보낸다.
+      const onClickTd = useCallback( () => {
+          if(cellData) return;
+           dispatch({ type: CLICK_CELL, row: rowIndex, cell: cellIndex  });
+      }, [cellData]);
+  
+      return (
+          <td onClick={onClickTd}>{cellData}</td>
+      );
+  });
+  
+  export default Td;
+  ```
+
+  - memo 로 감싸주면 리렌더링이 되지 않는다.
+  - 반복문이 있는 곳에 memo 를 적용하면 좋다.
+  - memo 를 적용한 후에도 개선이 되지 않으면 최후의 수단으로 useMemo 를 사용한다.
 
