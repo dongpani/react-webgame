@@ -9,7 +9,8 @@
 - [라이프사이클](#lifeCycle)
 - [로또추첨기](#lotto)
 - [로또추첨기 - hooks](#lotto_hooks)
-- [틱택토](#tictactoe)
+- [틱택토 - useReducer, dispatch](#tictactoe)
+- [지뢰찾기 - contextAPI](#mineSearch)
 
 
 
@@ -1149,4 +1150,10 @@ hooks 에서는 useEffect 로 위에 3개의 기능을 모두 사용할 수 있�
   - memo 로 감싸주면 리렌더링이 되지 않는다.
   - 반복문이 있는 곳에 memo 를 적용하면 좋다.
   - memo 를 적용한 후에도 개선이 되지 않으면 최후의 수단으로 useMemo 를 사용한다.
+
+
+
+<a name="mineSearch"> </a>
+
+## 지뢰찾기
 
