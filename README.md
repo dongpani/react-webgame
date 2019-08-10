@@ -1163,123 +1163,275 @@ hooks 에서는 useEffect 로 위에 3개의 기능을 모두 사용할 수 있�
 
 
 
-- createContext 설정
+### createContext 설정
 
-  ```react
-  import React, {useReducer, createContext, useMemo} from 'react';
-  import Form from './Form';
-  import Table from './Table';
-  
-  export const CODE = {
-      MINE: -7,
-      NORMAL : -1, 
-      QUESTION: -2,
-      FLAG: -3,
-      QUESTION_MINE: -4,
-      FLAG_MINE: -5,
-      CLICKED_MINE: -6,
-      OPENED: 0, // 0 이상이면 다 OPEN
-  };
-  
-  export const TableContext = createContext( {
-      tableData : [
-          [-1, -1, -1, -1, -1, -1, -1],
-          [-7, -1, -1, -1, -1, -1, -1],
-          [-1, -7, -1, -7, -7, -1, -1],
-          [],
-          [],        
-      ],
-      dispatch : () => {},
-  });
-  
-  const initialState = {
-      tableData : [],
-      timer: 0,
-      result: '',
-  }
-  
-  export const START_GAME = 'START_GAME';
-  
-  const reducer = (state, action) => {
-      switch (action.type) {
-          case START_GAME : 
-              return {
-                  ...state,
-                  tableData : plantMine(action.row, action.cell, action.value),
-              };
-  
-          default: 
-              return state;
-      }
-  };
-  
-  
-  
-  const MineSearch = () => {  
-      const [state, dispatch] = useReducer(reducer, initialState);
-      const value = useMemo( () => ({ tableData: state.tableData, dispatch }), [state.tableData] );
-  
-      return (
-          <TableContext.Provider value={ value }>
-              <Form />
-              <div>{state.timer}</div>
-              <Table />
-              <div>{state.result}</div>
-           </TableContext.Provider>
-      );
-  }
-  
-  export default MineSearch;
-  ```
+```react
+import React, {useReducer, createContext, useMemo} from 'react';
+import Form from './Form';
+import Table from './Table';
 
-  - contextAPI 를 사용한다. 이걸 사용하면 자식 컴포넌트로 state 를 한번에 전달할 수 있다.
+export const CODE = {
+    MINE: -7,
+    NORMAL : -1, 
+    QUESTION: -2,
+    FLAG: -3,
+    QUESTION_MINE: -4,
+    FLAG_MINE: -5,
+    CLICKED_MINE: -6,
+    OPENED: 0, // 0 이상이면 다 OPEN
+};
+
+export const TableContext = createContext( {
+    tableData : [
+        [-1, -1, -1, -1, -1, -1, -1],
+        [-7, -1, -1, -1, -1, -1, -1],
+        [-1, -7, -1, -7, -7, -1, -1],
+        [],
+        [],        
+    ],
+    dispatch : () => {},
+});
+
+const initialState = {
+    tableData : [],
+    timer: 0,
+    result: '',
+}
+
+export const START_GAME = 'START_GAME';
+
+const reducer = (state, action) => {
+    switch (action.type) {
+        case START_GAME : 
+            return {
+                ...state,
+                tableData : plantMine(action.row, action.cell, action.value),
+            };
+
+        default: 
+            return state;
+    }
+};
 
 
 
-- contextAPI 받기
+const MineSearch = () => {  
+    const [state, dispatch] = useReducer(reducer, initialState);
+    const value = useMemo( () => ({ tableData: state.tableData, dispatch }), [state.tableData] );
 
-  ```react
-  import React, {useState, useCallback, useContext} from 'react';
-  import { TableContext, START_GAME } from './MineSearch';
-  
-  
-  const Form = () => {  
-      console.log('this is form');
-  
-      const [row, setRow] = useState(10);
-      const [cell, setCell] = useState(10);
-      const [mine, setMine] = useState(20);
-      const { dispatch } = useContext(TableContext);
-  
-      const onChangeRow = useCallback((e) => {
-          setRow(e.target.value);
-      }, []);
-  
-      const onChangeCell = useCallback((e) => {
-          setCell(e.target.value);
-      }, []);
-      
-      const onChangeMine = useCallback((e) => {
-          setMine(e.target.value);
-      }, []);
-  
-      const onclickBtn = useCallback(() => {
-          dispatch({ type: START_GAME, row, cell, mine  }); 
-      }, [row, cell, mine]);
-  
-      return (
-          <form>
-              <div>
-                  <input type="number" placeholder="세로" value={row} onChange={onChangeRow} />
-                  <input type="number" placeholder="가로" value={cell} onChange={onChangeCell} />
-                  <input type="number" placeholder="지뢰" value={mine} onChange={onChangeMine} />
-                  <button onClick={onclickBtn}>시작</button>
-              </div>
-          </form>
-      );
-  };
-  
-  export default Form;
-  ```
+    return (
+        <TableContext.Provider value={ value }>
+            <Form />
+            <div>{state.timer}</div>
+            <Table />
+            <div>{state.result}</div>
+         </TableContext.Provider>
+    );
+}
 
-  - useContext 로 부모의 state 들을 가져올 수 있다.
+export default MineSearch;
+```
+
+- contextAPI 를 사용한다. 이걸 사용하면 자식 컴포넌트로 state 를 한번에 전달할 수 있다.
+
+
+
+### contextAPI 받기
+
+```react
+import React, {useState, useCallback, useContext} from 'react';
+import { TableContext, START_GAME } from './MineSearch';
+
+
+const Form = () => {  
+    console.log('this is form');
+
+    const [row, setRow] = useState(10);
+    const [cell, setCell] = useState(10);
+    const [mine, setMine] = useState(20);
+    const { dispatch } = useContext(TableContext);
+
+    const onChangeRow = useCallback((e) => {
+        setRow(e.target.value);
+    }, []);
+
+    const onChangeCell = useCallback((e) => {
+        setCell(e.target.value);
+    }, []);
+    
+    const onChangeMine = useCallback((e) => {
+        setMine(e.target.value);
+    }, []);
+
+    const onclickBtn = useCallback(() => {
+        dispatch({ type: START_GAME, row, cell, mine  }); 
+    }, [row, cell, mine]);
+
+    return (
+        <form>
+            <div>
+                <input type="number" placeholder="세로" value={row} onChange={onChangeRow} />
+                <input type="number" placeholder="가로" value={cell} onChange={onChangeCell} />
+                <input type="number" placeholder="지뢰" value={mine} onChange={onChangeMine} />
+                <button onClick={onclickBtn}>시작</button>
+            </div>
+        </form>
+    );
+};
+
+export default Form;
+```
+
+- useContext 로 부모의 state 들을 가져올 수 있다.
+
+
+
+### 테이블 만들기
+
+```react
+const plantMine = (row, cell, mine) => {
+    console.log('platMine', row, cell, mine);
+    const candidate = Array(row * cell).fill().map( (arr, i) => {
+        return i;
+    });
+
+    console.log('candidate', candidate);
+
+    const shuffle = [];
+    while (candidate.length > row * cell - mine) {
+        const chosen = candidate.splice(Math.floor(Math.random() * candidate.length), 1)[0];
+        shuffle.push(chosen);
+    }
+
+    const data = [];
+    for (let i=0; i < row; i++) {
+        const rowData = [];
+        data.push(rowData);
+        for (let j = 0; j < cell; j++) {
+            rowData.push(CODE.NORMAL);
+        }
+    }
+
+    for (let k =0; k < shuffle.length; k++) {
+        const ver = Math.floor(shuffle[k] / cell);
+        const hor = shuffle[k] % cell;
+        data[ver][hor] = CODE.MINE;
+    }
+
+    console.log('data', data);
+    return data;
+
+};
+```
+
+- 시작버튼 클릭 시 입력한 '행' 과 '열' 의 갯수로 테이블을 생성 하는 함수.
+
+
+
+###  테이블 칸 만들기
+
+```react
+import React, { useContext } from 'react';
+import Tr from './Tr';
+import { TableContext } from './MineSearch';
+
+const Table = () => {  
+    console.log('table redered');
+
+    const { tableData } = useContext(TableContext);
+
+    return (
+        <table>
+            {Array(tableData.length).fill().map( (tr, i) =>  <Tr rowIndex = {i}  /> )}
+        </table>
+    );
+};
+
+export default Table;
+```
+
+- useContext 를 사용해 부모컴포넌트의 데이터들을 불러옴.
+- props 로 행 Index 를 넘김.
+
+
+
+```react
+import React, { useContext } from 'react';
+import Td from './Td';
+import { TableContext } from './MineSearch';
+
+const Tr = ({ rowIndex }) => {
+    console.log('this is tr')
+
+    const { tableData } = useContext(TableContext);
+
+    return (
+        <tr>
+            {tableData[0] && Array(tableData[0].length).fill().map( (td, i) => <Td rowIndex={rowIndex} cellIndex={i} />)}
+        </tr>
+    );
+};
+
+export default Tr;
+```
+
+- useContext 를 사용해 부모컴포넌트의 데이터들을 불러옴.
+- Table 컴포넌트에서 받아온 props 와 열 Index 를 Td 컴포넌트로 전달.
+
+
+
+```react
+import React, { useContext } from 'react';
+import { TableContext, CODE } from './MineSearch';
+
+const getTdStyle = (code) => {
+    switch (code) {
+        case CODE.NORMAL:
+        case CODE.MINE:
+            return {
+                background: '#444',
+            };
+        case CODE.OPENED:
+            return {
+                background: 'white',
+            };
+        default:
+            return {
+                background: 'white',
+            };
+    }
+};
+
+const getTdText = (code) => {
+    switch (code) {
+        case CODE.NORMAL:
+            return '';
+        case CODE.MINE:
+            return 'X';
+        default:
+            return '';
+    }
+};
+
+const Td = ({ rowIndex, cellIndex }) => {
+    const { tableData } = useContext(TableContext);
+
+    return (
+        <td style={getTdStyle(tableData[rowIndex][cellIndex])}> 
+            {getTdText(tableData[rowIndex][cellIndex])}
+        </td>
+    );
+};
+
+export default Td;
+```
+
+- useContext 를 사용해 부모컴포넌트의 데이터들을 불러옴.
+- 각 셀에 스타일(color, text) 을 적용.
+
+
+
+<img src="/img/mineSearch01.png" />
+
+
+
