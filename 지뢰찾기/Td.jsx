@@ -1,26 +1,43 @@
-import React, {useCallback, useEffect, useRef, memo} from 'react';
-import { CLICK_CELL } from './TicTacToe';
+import React, { useContext } from 'react';
+import { TableContext, CODE } from './MineSearch';
 
-const Td =  memo( ( {rowIndex, cellIndex, dispatch, cellData} ) => {  
-    console.log('td Rendered');
+const getTdStyle = (code) => {
+    switch (code) {
+        case CODE.NORMAL:
+        case CODE.MINE:
+            return {
+                background: '#444',
+            };
+        case CODE.OPENED:
+            return {
+                background: 'white',
+            };
+        default:
+            return {
+                background: 'white',
+            };
+    }
+};
 
-    const ref = useRef([]);
+const getTdText = (code) => {
+    switch (code) {
+        case CODE.NORMAL:
+            return '';
+        case CODE.MINE:
+            return 'X';
+        default:
+            return '';
+    }
+};
 
-    useEffect( () => {
-        console.log(rowIndex === ref.current[0],  cellIndex === ref.current[1], dispatch === ref.current[2], cellData === ref.current[3]);
-        ref.current = [rowIndex, cellIndex, dispatch, cellData];
-    }, [rowIndex, cellIndex, dispatch, cellData]);
-
-
-    // 칸을 클릭 했을 때 행번호와, 칸 번호를 보낸다.
-    const onClickTd = useCallback( () => {
-        if(cellData) return;
-         dispatch({ type: CLICK_CELL, row: rowIndex, cell: cellIndex  });
-    }, [cellData]);
+const Td = ({ rowIndex, cellIndex }) => {
+    const { tableData } = useContext(TableContext);
 
     return (
-        <td onClick={onClickTd}>{cellData}</td>
+        <td style={getTdStyle(tableData[rowIndex][cellIndex])}> 
+            {getTdText(tableData[rowIndex][cellIndex])}
+        </td>
     );
-});
+};
 
 export default Td;

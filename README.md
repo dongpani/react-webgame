@@ -1157,3 +1157,129 @@ hooks 에서는 useEffect 로 위에 3개의 기능을 모두 사용할 수 있�
 
 ## 지뢰찾기
 
+
+
+무료 마지막 강좌 
+
+
+
+- createContext 설정
+
+  ```react
+  import React, {useReducer, createContext, useMemo} from 'react';
+  import Form from './Form';
+  import Table from './Table';
+  
+  export const CODE = {
+      MINE: -7,
+      NORMAL : -1, 
+      QUESTION: -2,
+      FLAG: -3,
+      QUESTION_MINE: -4,
+      FLAG_MINE: -5,
+      CLICKED_MINE: -6,
+      OPENED: 0, // 0 이상이면 다 OPEN
+  };
+  
+  export const TableContext = createContext( {
+      tableData : [
+          [-1, -1, -1, -1, -1, -1, -1],
+          [-7, -1, -1, -1, -1, -1, -1],
+          [-1, -7, -1, -7, -7, -1, -1],
+          [],
+          [],        
+      ],
+      dispatch : () => {},
+  });
+  
+  const initialState = {
+      tableData : [],
+      timer: 0,
+      result: '',
+  }
+  
+  export const START_GAME = 'START_GAME';
+  
+  const reducer = (state, action) => {
+      switch (action.type) {
+          case START_GAME : 
+              return {
+                  ...state,
+                  tableData : plantMine(action.row, action.cell, action.value),
+              };
+  
+          default: 
+              return state;
+      }
+  };
+  
+  
+  
+  const MineSearch = () => {  
+      const [state, dispatch] = useReducer(reducer, initialState);
+      const value = useMemo( () => ({ tableData: state.tableData, dispatch }), [state.tableData] );
+  
+      return (
+          <TableContext.Provider value={ value }>
+              <Form />
+              <div>{state.timer}</div>
+              <Table />
+              <div>{state.result}</div>
+           </TableContext.Provider>
+      );
+  }
+  
+  export default MineSearch;
+  ```
+
+  - contextAPI 를 사용한다. 이걸 사용하면 자식 컴포넌트로 state 를 한번에 전달할 수 있다.
+
+
+
+- contextAPI 받기
+
+  ```react
+  import React, {useState, useCallback, useContext} from 'react';
+  import { TableContext, START_GAME } from './MineSearch';
+  
+  
+  const Form = () => {  
+      console.log('this is form');
+  
+      const [row, setRow] = useState(10);
+      const [cell, setCell] = useState(10);
+      const [mine, setMine] = useState(20);
+      const { dispatch } = useContext(TableContext);
+  
+      const onChangeRow = useCallback((e) => {
+          setRow(e.target.value);
+      }, []);
+  
+      const onChangeCell = useCallback((e) => {
+          setCell(e.target.value);
+      }, []);
+      
+      const onChangeMine = useCallback((e) => {
+          setMine(e.target.value);
+      }, []);
+  
+      const onclickBtn = useCallback(() => {
+          dispatch({ type: START_GAME, row, cell, mine  }); 
+      }, [row, cell, mine]);
+  
+      return (
+          <form>
+              <div>
+                  <input type="number" placeholder="세로" value={row} onChange={onChangeRow} />
+                  <input type="number" placeholder="가로" value={cell} onChange={onChangeCell} />
+                  <input type="number" placeholder="지뢰" value={mine} onChange={onChangeMine} />
+                  <button onClick={onclickBtn}>시작</button>
+              </div>
+          </form>
+      );
+  };
+  
+  export default Form;
+  ```
+
+  - useContext 로 부모의 state 들을 가져올 수 있다.

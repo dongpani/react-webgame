@@ -1,11 +1,14 @@
-import React, {useState, useCallback} from 'react';
+import React, {useState, useCallback, useContext, memo} from 'react';
+import { TableContext, START_GAME } from './MineSearch';
 
-const Form = () => {  
+
+const Form = memo (() => {  
     console.log('this is form');
 
     const [row, setRow] = useState(10);
     const [cell, setCell] = useState(10);
     const [mine, setMine] = useState(20);
+    const { dispatch } = useContext(TableContext);
 
     const onChangeRow = useCallback((e) => {
         setRow(e.target.value);
@@ -19,9 +22,12 @@ const Form = () => {
         setMine(e.target.value);
     }, []);
 
-    const onclickBtn = () => {
-        
-    };
+    const onclickBtn = useCallback((e) => {
+        e.preventDefault();  // 리렌더링 자꾸되서 막았는데.. 왜 그런지 모르게씀..
+
+        console.log('콜백: ', row, cell, mine);
+        dispatch({ type: START_GAME, row, cell, mine }); 
+    }, [row, cell, mine]);
 
     return (
         <form>
@@ -33,6 +39,6 @@ const Form = () => {
             </div>
         </form>
     );
-};
+});
 
 export default Form;
