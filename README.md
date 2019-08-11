@@ -1435,3 +1435,217 @@ export default Td;
 
 
 
+<br/>
+
+
+
+### 셀 클릭하기
+
+```react
+export const START_GAME = 'START_GAME';
+export const OPEN_CELL = 'OPEN_CELL';
+
+const reducer = (state, action) => {
+    switch (action.type) {
+        case START_GAME : 
+            return {
+                ...state,
+                tableData : plantMine(action.row, action.cell, action.mine),
+            };
+
+        case OPEN_CELL : {
+            const tableData = [...state.tableData];
+            tableData[action.row] = [...state.tableData[action.row]];
+            tableData[action.row][action.cell] = CODE.OPENED;
+
+            return {
+                ...state,
+                tableData,
+            };
+        }
+
+        default: 
+            return state;
+    }
+};
+```
+
+- dispatch 등록 :  원본 데이터를 보존하는게 귀찮다.
+
+
+
+```react
+const Td = ({ rowIndex, cellIndex }) => {
+    const { tableData, dispatch } = useContext(TableContext);
+
+    const onClickTd = useCallback(() => {
+        dispatch( { type:OPEN_CELL,  row: rowIndex, cell: cellIndex } );
+    }, []);
+
+    return (
+        <td style={getTdStyle(tableData[rowIndex][cellIndex])} onClick={onClickTd}> 
+            {getTdText(tableData[rowIndex][cellIndex])}
+        </td>
+    );
+};
+
+```
+
+- 클릭이벤트를 등록 : dispath 로 최상위 컴포넌트에 한방에 넘긴다.
+
+
+
+<img src="img/mineSearch02.png" />
+
+- 데이터만 바꿔주면 화면을 자동으로 바뀜 ( React 의 장점 )
+
+
+
+### 왼쪽, 오른쪽 클릭에 따라 로직 처리하기
+
+1. 마우스 왼쪽 클릭 시 로직
+
+   - Td.jsx
+
+   ```react
+       const { tableData, dispatch, halted } = useContext(TableContext);
+       // 마우스 왼쪽 버튼
+       const onClickTd = useCallback(() => {
+           if(halted) 
+               return;
+   
+           switch (tableData[rowIndex][cellIndex]) {
+               case CODE.OPENED:
+               case CODE.FLAG_MINE:
+               case CODE.FLAG:
+               case CODE.QUESTION_MINE:
+               case CODE.QUESTION:
+                   return;
+   
+               case CODE.NORMAL:
+                   dispatch( { type:OPEN_CELL,  row: rowIndex, cell: cellIndex } );
+                   return;                
+               case CODE.MINE: 
+                   dispatch( { type:CLICK_MINE,  row: rowIndex, cell: cellIndex } );
+                   return;                
+               default:
+                   return;
+           }            
+       }, [tableData[rowIndex][cellIndex], halted]);
+   ```
+
+   - MineSearch.jsx 
+
+   ```react
+           case OPEN_CELL : {
+               const tableData = [...state.tableData];
+               tableData[action.row] = [...state.tableData[action.row]];
+               tableData[action.row][action.cell] = CODE.OPENED;
+   
+               return {
+                   ...state,
+                   tableData,
+               };
+           }
+   
+           case CLICK_MINE : {
+               const tableData = [...state.tableData];
+               tableData[action.row] = [...state.tableData[action.row]];
+               tableData[action.row][action.cell] = CODE.CLICKED_MINE;
+   
+               return {
+                   ...state,
+                   tableData,
+                   halted: true,
+               }
+           }
+   ```
+
+2. 마우스 오른쪽 클릭 시 로직
+
+   - 오른쪽 클릭이벤트 등록
+
+   ```react
+           <td style={getTdStyle(tableData[rowIndex][cellIndex])} onClick={onClickTd} onContextMenu={onRightClickTd} >
+               {getTdText(tableData[rowIndex][cellIndex])}
+           </td>
+   ```
+
+   - Td.jsx
+
+   ```react
+       const onRightClickTd = useCallback((e) => {
+           e.preventDefault();        
+           if(halted)
+               return;
+   
+           switch (tableData[rowIndex][cellIndex]) {
+               case CODE.NORMAL:
+               case CODE.MINE:
+                   dispatch( { type:FLAG_CELL,  row: rowIndex, cell: cellIndex } );
+                   return;
+               case CODE.FLAG_MINE:
+               case CODE.FLAG:
+                   dispatch( { type:QUESTION_CELL,  row: rowIndex, cell: cellIndex } );
+                   return; 
+               case CODE.QUESTION_MINE:
+               case CODE.QUESTION:
+                   dispatch( { type:NORMALIZE_CELL,  row: rowIndex, cell: cellIndex } );
+                   return;
+               default:
+                   return;
+   
+           }
+       }, [tableData[rowIndex][cellIndex], halted]);
+   ```
+
+   - MineSearch.jsx 
+
+   ```react
+           case FLAG_CELL : {
+               const tableData = [...state.tableData]; // 참조복사
+               tableData[action.row] = [...state.tableData[action.row]];
+               if(tableData[action.row][action.cell]) {
+                   tableData[action.row][action.cell] = CODE.FLAG_MINE;
+               }else {
+                   tableData[action.row][action.cell] = CODE.FLAG;
+               }
+               return {
+                   ...state,
+                   tableData,
+               }
+           }
+   
+           case QUESTION_CELL : {
+               const tableData = [...state.tableData]; // 참조복사
+               tableData[action.row] = [...state.tableData[action.row]];
+               if(tableData[action.row][action.cell] === CODE.FLAG_MINE) {
+                   tableData[action.row][action.cell] = CODE.QUESTION_MINE;
+               }else {
+                   tableData[action.row][action.cell] = CODE.QUESTION;
+               }
+               return {
+                   ...state,
+                   tableData,
+               }
+           }
+   
+           case NORMALIZE_CELL : {
+               const tableData = [...state.tableData];
+               tableData[action.row] = [...state.tableData[action.row]];
+               if(tableData[action.row][action.cell] === CODE.QUESTION_MINE) {
+                   tableData[action.row][action.cell] = CODE.MINE;
+               }else {
+                   tableData[action.row][action.cell] = CODE.NORMAL;
+               }
+               return {
+                   ...state,
+                   tableData,
+               }
+           }
+   ```
+
+
+
+<img src="img/mineSearch03.png" />
+
