@@ -1157,8 +1157,6 @@ hooks 에서는 useEffect 로 위에 3개의 기능을 모두 사용할 수 있�
 
 ## 지뢰찾기
 
-
-
 무료 마지막 강좌 
 
 
@@ -1649,3 +1647,74 @@ const Td = ({ rowIndex, cellIndex }) => {
 
 <img src="img/mineSearch03.png" />
 
+
+
+### 주변 칸 검사하기
+
+
+
+- MineSearch.jsx
+
+  ```react
+         case OPEN_CELL : {
+              const tableData = [...state.tableData];
+              tableData[action.row] = [...state.tableData[action.row]];
+              tableData[action.row][action.cell] = CODE.OPENED;
+  
+              let around = [];
+              if(tableData[action.row -1]) { // 윗줄
+                  around= around.concat( 
+                      tableData[action.row - 1][action.cell -1],
+                      tableData[action.row - 1][action.cell],
+                      tableData[action.row - 1][action.cell +1],
+                  );
+              }
+  
+              around = around.concat( //  왼쪽, 오른쪽
+                  tableData[action.row][action.cell -1],
+                  tableData[action.row][action.cell +1],
+              );
+  
+              if(tableData[action.row +1]) { // 아랫줄
+                  around = around.concat( 
+                      tableData[action.row + 1][action.cell -1],
+                      tableData[action.row + 1][action.cell],
+                      tableData[action.row + 1][action.cell +1],
+                  );
+              }          
+  
+              const count = around.filter((v) => [CODE.MINE, CODE.FLAG_MINE, CODE.QUESTION_MINE].includes(v)).length;
+              console.log(around, count);
+              tableData[action.row][action.cell] = count;
+  ```
+
+  - 칸을 클릭 했을 때 윗줄, 아랫줄, 왼쪽칸, 오른쪽칸 총 8개의 칸의 값을 검사한다.
+
+- Td.jsx
+
+  ```react
+  const getTdText = (code) => {
+      switch (code) {
+          case CODE.NORMAL:
+              return '';
+          case CODE.MINE:
+              return 'X';        
+          case CODE.CLICKED_MINE:
+              return '펑';
+          case CODE.FLAG_MINE: 
+          case CODE.FLAG:
+              return '!';
+          case CODE.QUESTION_MINE: 
+          case CODE.QUESTION: 
+              return '?';
+          default:
+              return code || '';
+      }
+  };
+  ```
+
+  - default 코드 변경
+
+
+
+<img src="img/mineSearch04.png" />
