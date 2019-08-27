@@ -78,35 +78,72 @@ const reducer = (state, action) => {
 
         case OPEN_CELL : {
             const tableData = [...state.tableData];
-            tableData[action.row] = [...state.tableData[action.row]];
-            tableData[action.row][action.cell] = CODE.OPENED;
-
-            let around = [];
-            if(tableData[action.row -1]) { // 윗줄
-                around= around.concat( 
-                    tableData[action.row - 1][action.cell -1],
-                    tableData[action.row - 1][action.cell],
-                    tableData[action.row - 1][action.cell +1],
+            tableData.forEach( (row, i) => {
+                    tableData[i] = [...state.tableData[i]];
+            });
+            const checked = [];
+            const checkArround = (row, cell) => {   // 주변 8칸 검사.
+                if([CODE.OPENED, CODE.FLAG_MINE, CODE.FLAG, CODE.QUESTION_MINE, CODE.QUESTION].includes(tableData[row][cell])) {
+                    return;
+                }
+                if (row < 0 || row >= tableData.length || cell < 0 || cell >= tableData[0].length) {
+                    return;
+                }
+                
+                if (checked.includes(row + ',' + cell)) { // 이미 검사한 칸이면 종료 -> 재귀 호출시 무제가 될 수 있는 부분이므로 사전에 방지.
+                    return;   
+                } else {
+                    checked.push(row + ',' + cell);
+                }
+                let around = [];
+                if(tableData[row -1]) { // 윗줄
+                    around= around.concat( 
+                        tableData[row - 1][cell -1],
+                        tableData[row - 1][cell],
+                        tableData[row - 1][cell +1],
+                    );
+                }
+    
+                around = around.concat( //  왼쪽, 오른쪽
+                    tableData[row][cell -1],
+                    tableData[row][cell +1],
                 );
-            }
+    
+                if(tableData[row +1]) { // 아랫줄
+                    around = around.concat( 
+                        tableData[row + 1][cell -1],
+                        tableData[row + 1][cell],
+                        tableData[row + 1][cell +1],
+                    );
+                }          
+    
+                const count = around.filter((v) => [CODE.MINE, CODE.FLAG_MINE, CODE.QUESTION_MINE].includes(v)).length;
+                console.log(around, count);
 
-            around = around.concat( //  왼쪽, 오른쪽
-                tableData[action.row][action.cell -1],
-                tableData[action.row][action.cell +1],
-            );
-
-            if(tableData[action.row +1]) { // 아랫줄
-                around = around.concat( 
-                    tableData[action.row + 1][action.cell -1],
-                    tableData[action.row + 1][action.cell],
-                    tableData[action.row + 1][action.cell +1],
-                );
-            }          
-
-            const count = around.filter((v) => [CODE.MINE, CODE.FLAG_MINE, CODE.QUESTION_MINE].includes(v)).length;
-            console.log(around, count);
-            tableData[action.row][action.cell] = count;
+                if(count === 0) {
+                    const near = [];
+                    if(row -1 > -1) {
+                        near.push([row -1, cell -1]);
+                        near.push([row -1, cell]);
+                        near.push([row -1, cell +1]);
+                    }
+                    near.push([row, cell -1]);
+                    near.push([row, cell +1]);
+                    if( row +1 > tableData.length) {
+                        near.push([row + 1, cell -1]);
+                        near.push([row + 1, cell]);
+                        near.push([row + 1, cell +1]);
+                    }
+                    near.forEach( (n) => {
+                        if(tableData[n[0]][n[1]] !== CODE.OPENED)
+                        checkArround(n[0], n[1]);
+                    });
+                }
+                tableData[row][cell] = count;
+            };
             
+            checkArround(action.row, action.cell);
+            //tableData[action.row][action.cell] = CODE.OPENED;
             return {
                 ...state,
                 tableData,

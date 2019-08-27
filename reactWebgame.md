@@ -1718,3 +1718,89 @@ const Td = ({ rowIndex, cellIndex }) => {
 
 
 <img src="img/mineSearch04.png" />
+
+
+
+### 주변칸 한번에 열기 (재귀사용)
+
+
+
+- MineSearch.jsx
+
+  ```react
+          case OPEN_CELL : {
+              const tableData = [...state.tableData];
+              tableData.forEach( (row, i) => {
+                      tableData[i] = [...state.tableData[i]];
+              });
+              const checked = [];
+              const checkArround = (row, cell) => {   // 주변 8칸 검사.
+                  if([CODE.OPENED, CODE.FLAG_MINE, CODE.FLAG, CODE.QUESTION_MINE, CODE.QUESTION].includes(tableData[row][cell])) {
+                      return;
+                  }
+                  if (row < 0 || row >= tableData.length || cell < 0 || cell >= tableData[0].length) {
+                      return;
+                  }
+                  
+                  if (checked.includes(row + ',' + cell)) { // 이미 검사한 칸이면 종료 -> 재귀 호출시 무제가 될 수 있는 부분이므로 사전에 방지.
+                      return;   
+                  } else {
+                      checked.push(row + ',' + cell);
+                  }
+                  let around = [];
+                  if(tableData[row -1]) { // 윗줄
+                      around= around.concat( 
+                          tableData[row - 1][cell -1],
+                          tableData[row - 1][cell],
+                          tableData[row - 1][cell +1],
+                      );
+                  }
+      
+                  around = around.concat( //  왼쪽, 오른쪽
+                      tableData[row][cell -1],
+                      tableData[row][cell +1],
+                  );
+      
+                  if(tableData[row +1]) { // 아랫줄
+                      around = around.concat( 
+                          tableData[row + 1][cell -1],
+                          tableData[row + 1][cell],
+                          tableData[row + 1][cell +1],
+                      );
+                  }          
+      
+                  const count = around.filter((v) => [CODE.MINE, CODE.FLAG_MINE, CODE.QUESTION_MINE].includes(v)).length;
+                  console.log(around, count);
+  
+                  if(count === 0) {
+                      const near = [];
+                      if(row -1 > -1) {
+                          near.push([row -1, cell -1]);
+                          near.push([row -1, cell]);
+                          near.push([row -1, cell +1]);
+                      }
+                      near.push([row, cell -1]);
+                      near.push([row, cell +1]);
+                      if( row +1 > tableData.length) {
+                          near.push([row + 1, cell -1]);
+                          near.push([row + 1, cell]);
+                          near.push([row + 1, cell +1]);
+                      }
+                      near.forEach( (n) => {
+                          if(tableData[n[0]][n[1]] !== CODE.OPENED)
+                          checkArround(n[0], n[1]);
+                      });
+                  }
+                  tableData[row][cell] = count;
+              };
+              
+              checkArround(action.row, action.cell);
+              //tableData[action.row][action.cell] = CODE.OPENED;
+              return {
+                  ...state,
+                  tableData,
+              };
+          }
+  ```
+
+  - 재귀사용시 주의할 점은 무한반복이 일어날 수 있기 때문에 반드시 빠져나갈 구멍을 만들어 둬야 한다.
